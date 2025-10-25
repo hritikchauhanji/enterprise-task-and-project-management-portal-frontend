@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const API_URL =
@@ -9,7 +9,7 @@ interface User {
   name: string;
   email: string;
   username: string;
-  role: "admin" | "employee";
+  role: string;
   profileImage?: { url: string };
 }
 
@@ -31,12 +31,20 @@ export const register = createAsyncThunk(
   "auth/register",
   async (userData: FormData, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(`${API_URL}/auth/register`, userData);
-      return data.data;
+      const { data } = await axios.post(`${API_URL}/auth/register`, userData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return {
+        user: data.data,
+        message: data.message,
+      };
     } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Registration failed"
-      );
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue({
+        message: error.message || "Registration failed",
+      });
     }
   }
 );
@@ -52,7 +60,7 @@ export const login = createAsyncThunk(
       localStorage.setItem("token", data.data.accessToken);
       return data.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Login failed");
+      return rejectWithValue(error.response?.data?.message);
     }
   }
 );
@@ -91,7 +99,6 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload.user;
-        state.token = action.payload.token;
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
