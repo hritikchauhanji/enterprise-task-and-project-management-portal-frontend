@@ -1,4 +1,3 @@
-readme_content = '''
 # Enterprise Task & Project Management Portal
 
 A full-stack web application for teams to manage projects, tasks, progress, and real-time collaboration—featuring admin and employee roles, built with **Next.js, shadcn/ui, Tailwind CSS, Redux Toolkit, Node.js, Express, and MongoDB**.
