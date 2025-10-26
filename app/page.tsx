@@ -26,7 +26,7 @@ export default function HomePage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <div className="text-center space-y-6 p-8">
         <h1 className="text-5xl font-bold text-gray-900 dark:text-white">
-          Task Management Portal
+          Task & Project Management Portal
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-300">
           Organize projects, manage tasks, and collaborate with your team

@@ -66,7 +66,7 @@ export default function DashboardLayout({
       {/* Sidebar */}
       <aside className="w-64 bg-card border-r flex flex-col">
         <div className="p-6 border-b">
-          <h2 className="text-xl font-bold">Task Manager</h2>
+          <h2 className="text-xl font-bold">Project & Task Manager</h2>
           <p className="text-sm text-muted-foreground capitalize mt-1">
             {user.role} Portal
           </p>
