@@ -14,7 +14,7 @@ export default function HomePage() {
   useEffect(() => {
     // Redirect authenticated users to their dashboard
     if (token && user) {
-      if (user.role === "admin") {
+      if (user.role === "ADMIN") {
         router.push("/admin/projects");
       } else {
         router.push("/employee/dashboard");

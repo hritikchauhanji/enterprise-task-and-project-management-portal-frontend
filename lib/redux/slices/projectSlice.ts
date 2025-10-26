@@ -40,7 +40,7 @@ export const fetchProjects = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const endpoint =
-        state.auth.user?.role === "admin" ? "/project" : "/project/user";
+        state.auth.user?.role === "ADMIN" ? "/project" : "/project/user";
       const { data } = await axios.get(
         `${API_URL}${endpoint}`,
         getAuthHeaders(getState)
@@ -63,7 +63,12 @@ export const createProject = createAsyncThunk(
       );
       return data.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue({
+        message: error.message || "Project is not created.",
+      });
     }
   }
 );
@@ -82,7 +87,12 @@ export const updateProject = createAsyncThunk(
       );
       return data.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message);
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue({
+        message: error.message || "Project is not created.",
+      });
     }
   }
 );
@@ -93,6 +103,21 @@ export const deleteProject = createAsyncThunk(
     try {
       await axios.delete(`${API_URL}/project/${id}`, getAuthHeaders(getState));
       return id;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+
+export const getProject = createAsyncThunk(
+  "projects/get",
+  async (id: string, { getState, rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(
+        `${API_URL}/project/${id}`,
+        getAuthHeaders(getState)
+      );
+      return data.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message);
     }
@@ -131,6 +156,18 @@ const projectSlice = createSlice({
       })
       .addCase(deleteProject.fulfilled, (state, action) => {
         state.projects = state.projects.filter((p) => p._id !== action.payload);
+      })
+      .addCase(getProject.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getProject.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.currentProject = action.payload;
+      })
+      .addCase(getProject.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
       });
   },
 });
